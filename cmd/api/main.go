@@ -1,57 +1,27 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"log"
 	"net/http"
-	"os"
 	"time"
+	"watch-me-api/cmd/api/application"
 )
 
-const version = "1.0.0"
-
-type config struct {
-	port int
-	env  string
-}
-
-type application struct {
-	config config
-	logger *log.Logger
-}
-
-func (app *application) healthcheckHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "status available")
-	fmt.Fprintf(w, "environment %s\n", app.config.env)
-	fmt.Fprintf(w, "version %s\n", version)
-}
-
 func main() {
-	var cfg config
 
-	flag.IntVar(&cfg.port, "port", 4000, "Api server port")
-	flag.StringVar(&cfg.env, "env", "development", "Environment (developt|staging|production)")
-	flag.Parse()
+	app := application.New()
 
-	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-
-	app := &application{
-		config: cfg,
-		logger: logger,
-	}
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/v1/healthcheck", app.healthcheckHandler)
+	logger := app.Logger
+	cfg := app.Config
 
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", cfg.port),
-		Handler:      mux,
+		Addr:         fmt.Sprintf(":%d", cfg.Port),
+		Handler:      app.Routes(),
 		IdleTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
 
-	logger.Printf("starting %s server on %s", cfg.env, srv.Addr)
+	logger.Printf("starting %s server on %s", cfg.Env, srv.Addr)
 	err := srv.ListenAndServe()
 	logger.Fatal(err)
 
