@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"watch-me-api/cmd/api/handlers"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -47,7 +48,7 @@ func (app *Application) Routes() *httprouter.Router {
 	router := httprouter.New()
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/movies", app.healthcheckHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/movies/:id", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/movies", handlers.CreateMovieHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/movies/:id", handlers.GetByIdHandler)
 	return router
 }
