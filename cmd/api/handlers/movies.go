@@ -9,8 +9,21 @@ import (
 	"watch-me-api/internals/data"
 )
 
+type movieDto struct {
+	Title   string   `json:"title"`
+	Year    string   `json:"year"`
+	Runtime string   `json:"runtime"`
+	Genres  []string `json:"genres"`
+}
+
 func CreateMovieHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "create a new movie")
+	var newMovie movieDto
+	err := helpers.ReadJson(w, r, &newMovie)
+	if err != nil {
+		customerrors.ErrorResponse(w, r, http.StatusBadRequest, err.Error())
+		return
+	}
+	fmt.Fprintf(w, "create a new movie  %+v\n", newMovie)
 }
 
 func GetByIdHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,5 +46,4 @@ func GetByIdHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		customerrors.ServerErrorResponse(w, r, err)
 	}
-
 }

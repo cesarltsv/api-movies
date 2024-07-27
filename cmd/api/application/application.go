@@ -63,7 +63,7 @@ func (app *Application) Routes() *httprouter.Router {
 	router.MethodNotAllowed = http.HandlerFunc(customerrors.MethodNotAllowedResponse)
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/movies", handlers.CreateMovieHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/movies", handlers.CreateMovieHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/movies/:id", handlers.GetByIdHandler)
 	return router
 }

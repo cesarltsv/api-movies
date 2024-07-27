@@ -1,7 +1,15 @@
-GET http://localhost:4000/movies/1
+GET http://localhost:4000/v1/movies/1
 
 
 ###
 
-GET http://localhost:4000/movies/foo
+POST http://localhost:4000/v1/movies
+Content-Type: application/json
+
+{
+    "title": "Deadpool & wolverine",
+    "yeasr": "2023",
+    "runtime": "23544",
+    "genres": ["comedy", "action"]
+}
 
