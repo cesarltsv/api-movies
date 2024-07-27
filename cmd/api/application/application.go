@@ -1,12 +1,12 @@
 package application
 
 import (
-	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
 	"os"
 	"watch-me-api/cmd/api/handlers"
+	"watch-me-api/cmd/api/helpers"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -39,21 +39,20 @@ func New() *Application {
 }
 
 func (app *Application) healthcheckHandler(w http.ResponseWriter, r *http.Request) {
-	data := map[string]string{
-		"status":      "Available",
-		"environment": app.Config.Env,
-		"version":     Version,
+	data := helpers.Envelop{
+		"status": "available",
+		"system_info": map[string]string{
+			"environment": app.Config.Env,
+			"version":     Version,
+		},
 	}
-	js, err := json.Marshal(data)
+
+	err := helpers.WriteJson(w, http.StatusOK, data, nil)
+
 	if err != nil {
 		app.Logger.Println(err)
 		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
-		return
 	}
-	js = append(js, '\n')
-
-	w.Header().Set("Content-Type", "Application/json")
-	w.Write(js)
 }
 
 func (app *Application) Routes() *httprouter.Router {

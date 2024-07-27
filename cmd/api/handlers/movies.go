@@ -3,7 +3,9 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"time"
 	"watch-me-api/cmd/api/helpers"
+	"watch-me-api/internals/data"
 )
 
 func CreateMovieHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,5 +18,19 @@ func GetByIdHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	fmt.Fprintf(w, "The selected movie was: %d\n", id)
+
+	movie := data.Movie{
+		ID:        id,
+		CreatedAt: time.Now(),
+		Title:     "Madacascar",
+		Runtime:   102,
+		Genres:    []string{"drama", "comedy"},
+		Version:   1,
+	}
+
+	err = helpers.WriteJson(w, http.StatusOK, helpers.Envelop{"movie": movie}, nil)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+	}
+
 }

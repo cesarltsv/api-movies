@@ -1,12 +1,15 @@
 package helpers
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 )
+
+type Envelop map[string]interface{}
 
 func ReadIdParam(r *http.Request) (int64, error) {
 	params := httprouter.ParamsFromContext(r.Context())
@@ -16,4 +19,23 @@ func ReadIdParam(r *http.Request) (int64, error) {
 		return 0, errors.New("invalid id parameter")
 	}
 	return id, nil
+}
+
+func WriteJson(w http.ResponseWriter, status int, data Envelop, headers http.Header) error {
+	js, err := json.MarshalIndent(data, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	js = append(js, '\n')
+
+	for key, value := range headers {
+		w.Header()[key] = value
+	}
+
+	w.Header().Set("Content-Type", "Application/json")
+	w.WriteHeader(status)
+	w.Write(js)
+	return nil
+
 }
