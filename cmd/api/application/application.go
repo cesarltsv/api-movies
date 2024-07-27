@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	customerrors "watch-me-api/cmd/api/customErrors"
 	"watch-me-api/cmd/api/handlers"
 	"watch-me-api/cmd/api/helpers"
 
@@ -51,15 +52,22 @@ func (app *Application) healthcheckHandler(w http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		app.Logger.Println(err)
-		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+		customerrors.ServerErrorResponse(w, r, err)
 	}
 }
 
 func (app *Application) Routes() *httprouter.Router {
 	router := httprouter.New()
 
+	router.NotFound = http.HandlerFunc(customerrors.NotFoundResponse)
+	router.MethodNotAllowed = http.HandlerFunc(customerrors.MethodNotAllowedResponse)
+
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/movies", handlers.CreateMovieHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/movies/:id", handlers.GetByIdHandler)
 	return router
+}
+
+func (app *Application) LogError(r *http.Request, err error) {
+	app.Logger.Println(err)
 }

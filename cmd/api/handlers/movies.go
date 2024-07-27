@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+	customerrors "watch-me-api/cmd/api/customErrors"
 	"watch-me-api/cmd/api/helpers"
 	"watch-me-api/internals/data"
 )
@@ -30,7 +31,7 @@ func GetByIdHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = helpers.WriteJson(w, http.StatusOK, helpers.Envelop{"movie": movie}, nil)
 	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		customerrors.ServerErrorResponse(w, r, err)
 	}
 
 }
