@@ -1,13 +1,16 @@
 package data
 
-import "time"
+import (
+	"time"
+	"watch-me-api/cmd/api/helpers"
+)
 
 type Movie struct {
-	ID        int64     `json:"id"`
-	CreatedAt time.Time `json:"-"`
-	Title     string    `json:"title"`
-	Year      int32     `json:"year,omitempty"`
-	Runtime   int32     `json:"runTime,omitempty,string"`
-	Genres    []string  `json:"genres,omitempty"`
-	Version   int32     `json:"version"`
+	ID        int64           `json:"id"`
+	CreatedAt time.Time       `json:"-"`
+	Title     string          `json:"title"`
+	Year      int32           `json:"year,omitempty"`
+	Runtime   helpers.Runtime `json:"runTime,omitempty"`
+	Genres    []string        `json:"genres,omitempty"`
+	Version   int32           `json:"version"`
 }
