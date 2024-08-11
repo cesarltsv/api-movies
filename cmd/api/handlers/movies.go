@@ -20,7 +20,7 @@ func CreateMovieHandler(w http.ResponseWriter, r *http.Request) {
 	var newMovie movieDto
 	err := helpers.ReadJson(w, r, &newMovie)
 	if err != nil {
-		customerrors.ErrorResponse(w, r, http.StatusBadRequest, err.Error())
+		customerrors.BadRequestResponse(w, r, err)
 		return
 	}
 	fmt.Fprintf(w, "create a new movie  %+v\n", newMovie)
